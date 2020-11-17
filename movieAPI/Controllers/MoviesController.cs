@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using movieAPI.Entities;
+using movieAPI.Repositories;
 
 namespace movieAPI.Controllers
 {
@@ -12,23 +13,23 @@ namespace movieAPI.Controllers
     [Route("[controller]")]
     public class MoviesController : ControllerBase
     {
-        private static readonly string[] Summaries = new[]
-        {
-            "Freezing", "Bracing", "Chilly", "Cool", "Mild", "Warm", "Balmy", "Hot", "Sweltering", "Scorching"
-        };
+         
+        // private readonly ILogger<MoviesController> _logger;              No use of logging in this example
+        IMovies _moviesData;
 
-        private readonly ILogger<MoviesController> _logger;
-
-        public MoviesController(ILogger<MoviesController> logger)
+        public MoviesController(IMovies movies)
         {
-            _logger = logger;
+            //_logger = logger;                                         // No logging unfortunately
+            _moviesData = movies;
         }
 
-        [HttpGet]
-        public IEnumerable<Movie> Get()
+        [HttpGet("stats")]
+        public List<MovieStat> Order()
         {
-            var rng = new Random();
-            return Enumerable.Range(1, 5).Select(index => new Movie{}).ToArray();
+
+            return _moviesData.GetMoviesStats();
         }
+         
+         
     }
 }
