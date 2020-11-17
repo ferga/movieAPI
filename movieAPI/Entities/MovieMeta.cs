@@ -13,7 +13,7 @@ namespace movieAPI.Entities
         string _language;
         string _duration;
 
-        public MovieMeta(int movieId, string title, string releaseYear,  string language, string duration)
+        public MovieMeta(int movieId, string title,  string language, string duration, string releaseYear)
         {
             MovieId = movieId;
             Title = title;
