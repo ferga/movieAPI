@@ -33,5 +33,3 @@ That should return something similar to the below, along with the status "200 Ok
     "token": 27
 }
 
---- Note, Posting will not have an affect to the amount of entries in the list, as the repositories are not static. Making them
-static would have them keep the new values until the project have been restarted, but that was out of this project's scope

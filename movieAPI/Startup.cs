@@ -31,7 +31,7 @@ namespace movieAPI
             });
             // services.AddTransient<IMovieRepository, MovieRepository>();
             services.AddControllers();
-            services.AddTransient<IMovies, Movies>();
+            services.AddSingleton<IMovies, Movies>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
