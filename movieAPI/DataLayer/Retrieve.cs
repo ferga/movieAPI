@@ -17,7 +17,7 @@ namespace movieAPI.DataLayer
             IDataRetriever dtRetriever;
             List<string> records;
 
-            if (dataSrcConnection.Contains("txt"))
+            if (dataSrcConnection.Contains(".csv"))
             {
                 dtRetriever = new fromText();
                 records = dtRetriever.RetrieveData(dataSrcConnection); 

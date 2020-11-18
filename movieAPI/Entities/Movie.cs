@@ -11,7 +11,7 @@ namespace movieAPI.Entities
     {
         int _movieId;
         string _title;
-        string _releaseYear;
+        int _releaseYear;
 
 
         public Movie()
@@ -19,16 +19,16 @@ namespace movieAPI.Entities
 
         }
 
-        public Movie(int movieId, string title, string releaseYear)
+        public Movie(int movId, string ttl, int relYear)
         {
-            MovieId = movieId;
-            Title = title;
-            ReleaseYear = releaseYear;
+            movieId = movId;
+            title = ttl;
+            releaseYear = relYear;
             
         }
 
-        public int MovieId { get => _movieId; set => _movieId = value; }
-        public string Title { get => _title; set => _title = value; }
-        public string ReleaseYear { get => _releaseYear; set => _releaseYear = value; }
+        public int movieId { get => _movieId; set => _movieId = value; }
+        public string title { get => _title; set => _title = value; } 
+        public int releaseYear { get => _releaseYear; set => _releaseYear = value; }
     }
 }

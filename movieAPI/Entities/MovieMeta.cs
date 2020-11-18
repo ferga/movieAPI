@@ -17,16 +17,16 @@ namespace movieAPI.Entities
         {
         }
 
-        public MovieMeta(int movieId, string title,  string language, string duration, string releaseYear)
+        public MovieMeta(int movId, string ttl,  string language, string durn, string ReleaseYear)
         {
-            MovieId = movieId;
-            Title = title;
-            ReleaseYear = releaseYear;
+            movieId = movId;
+            title = ttl;
+             releaseYear=Convert.ToInt32(ReleaseYear );
             _language = language;
-            _duration = duration;
+            _duration = durn;
         }
 
-        public string Language { get => _language; set => _language = value; }
-        public string Duration { get => _duration; set => _duration = value; }
+        public string language { get => _language; set => _language = value; }
+        public string duration { get => _duration; set => _duration = value; }
     }
 }

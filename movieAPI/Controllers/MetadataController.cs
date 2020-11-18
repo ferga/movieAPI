@@ -23,17 +23,17 @@ namespace movieAPI.Controllers
             _moviesData = movies;
         }
 
-        [HttpGet("{OrderRef}")]
-        public List<MovieMeta> Order(int movieRef)
+        [HttpGet("{movieRef}")]
+        public List<MovieMeta> getMeta(int movieRef)
         {
             List<MovieMeta> results=_moviesData.GetMoviesMeta(movieRef);
             // we need to return results ordered alphabetically by language
-            results=results.OrderBy(x => x.Language).ToList();
+            results=results.OrderBy(x => x.language).ToList();
             return results;
         }
 
         [HttpPost]
-        public IActionResult saveMeta(MovieMeta movie)
+        public IActionResult saveMeta([FromBody] MovieMeta movie)
         {
             try
             {

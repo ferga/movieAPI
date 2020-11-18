@@ -26,8 +26,12 @@ namespace movieAPI.Controllers
         [HttpGet("stats")]
         public List<MovieStat> Order()
         {
+            // The movies are ordered by most watched, then by release year with newer releases being
+            // considered more important
+            List < MovieStat > results=_moviesData.GetMoviesStats();
+            results = results.OrderBy(x => x.WatchCount).ThenByDescending(y => y.releaseYear).ToList();
 
-            return _moviesData.GetMoviesStats();
+            return results;
         }
          
          

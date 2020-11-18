@@ -22,8 +22,8 @@ namespace movieAPI.Repositories
             int movieID;
             int DurationMs;
         }
-        const string metaFileLocation = "../DataFiles/metadata.csv";        // Normally, I would have this information placed in the Appsettings.Json
-        const string statsFileLocation = "../DataFiles/stats.csv";        // Normally, I would have this information placed in the Appsettings.Json
+        const string metaFileLocation = "./DataFiles/metadata.csv";        // Normally, I would have this information placed in the Appsettings.Json
+        const string statsFileLocation = "./DataFiles/stats.csv";        // Normally, I would have this information placed in the Appsettings.Json
 
         private List<MovieMeta> moviesWithMeta;
         private List<MovieStat> moviesWithStat;
@@ -55,22 +55,26 @@ namespace movieAPI.Repositories
             double sumOfMs = 0;
             foreach (string statString in statsStrings)
             {
-                int newID = Convert.ToInt32((statString.Split(','))[0]);
-                double currentMs = Convert.ToDouble((statString.Split(','))[1]);
-                if ((newID != currentID) && (numOfEntries > 0))           //  a) we can't divide by zero b) we only want to add a stat after we got an entry
+                int newID = 0;
+                bool ret_val = Int32.TryParse((statString.Split(','))[0], out newID);
+                if (ret_val)        // We have valid values
                 {
-                    // Argument is int, as the average watch time, shouldn't be more than the movies duration
-                    MovieStat aStat = new MovieStat(currentID, (int)(sumOfMs / numOfEntries), numOfEntries);
-                    moviesWithStat.Add(aStat);
-                    numOfEntries = 0;
-                    sumOfMs = currentMs;
-                }
-                else
-                {
-                    sumOfMs += currentMs;                               // Add entry to the sum of stats
-                    numOfEntries++;
-                }
-                currentID = newID;                                  // Set the id of the new statString element
+                    double currentMs = Convert.ToDouble((statString.Split(','))[1]);
+                    if ((newID != currentID) && (numOfEntries > 0))           //  a) we can't divide by zero b) we only want to add a stat after we got an entry
+                    {
+                        // Argument is int, as the average watch time, shouldn't be more than the movies duration
+                        MovieStat aStat = new MovieStat(currentID, (int)(sumOfMs / numOfEntries), numOfEntries);
+                        moviesWithStat.Add(aStat);
+                        numOfEntries = 0;
+                        sumOfMs = currentMs;
+                    }
+                    else
+                    {
+                        sumOfMs += currentMs;                               // Add entry to the sum of stats
+                        numOfEntries++;
+                    }
+                    currentID = newID;         // Set the id of the new statString element
+                }   // Else this line has headers or invalid text
             }
             // There should be one last item we haven't inserted to the list
             if (numOfEntries != 0)
@@ -87,36 +91,43 @@ namespace movieAPI.Repositories
             {
                 string[] metaArray = meta.Split(',');
                 // We will not consider metadata with missing values
-                if (metaArray.Length > 5)
+                int newID,tempYear = 0;
+                bool ret_id = Int32.TryParse(metaArray[0], out newID);     // every valid data line, should start with an id
+                bool ret_year = Int32.TryParse(metaArray[5], out tempYear);     // every valid data line, should start with an id
+
+                if (ret_id&&ret_year)
                 {
-                // MetaArray[0] should be the file id
-                    MovieMeta metaItem = new MovieMeta(Convert.ToInt32(metaArray[1]), metaArray[2], metaArray[3], metaArray[4], metaArray[5]);
-                    // The first item as the previous and the current one
-                    if (previousMeta == null)
-                        previousMeta = metaItem;
-                    else
-                    // Make sure there are no empty values
-                    if (metaItem.MovieId != 0 && metaItem.Title != "" && metaItem.Language != "" && metaItem.Duration != "" && metaItem.ReleaseYear != "")
+                    if (metaArray.Length > 5)
                     {
-                        // We have to take only the latest (higher ID number) of the same metadata
-                        // as "same", we consider metadata that have the same movieID and Language parameters
-                        if ((metaItem.MovieId != previousMeta.MovieId) || (metaItem.Language != previousMeta.Language))
-                        {// We have a new meta data that needs to be stored, 
-                         //  previousMeta, have the latest values of similar metas, since the list ordered by id and movieID
-                            moviesWithMeta.Add(metaItem);
-                            previousMeta = metaItem;        // Update the previous meta as we have added it to the list
-                            // Add the missing data in the stats list objects
-                            var obj = moviesWithStat.FirstOrDefault(statList => statList.MovieId == metaItem.MovieId);
-                            // obj is a reference type like the MovieStat inside the list so, the above assignment is a reference copy
-                            // thus, any change in the obj values, will be a change of the values inside the list...
-                            if (obj != null)        // There might extra movieIDs that do not exist in the metadata file
-                            {
-                                obj.Title = metaItem.Title;
-                                obj.ReleaseYear = metaItem.ReleaseYear;
+                        // MetaArray[0] should be the file id
+                        MovieMeta metaItem = new MovieMeta(Convert.ToInt32(metaArray[1]), metaArray[2], metaArray[3], metaArray[4], metaArray[5]);
+                        // The first item as the previous and the current one
+                        if (previousMeta == null)
+                            previousMeta = metaItem;
+                        else
+                        // Make sure there are no empty values
+                        if (metaItem.movieId != 0 && metaItem.title != "" && metaItem.language != "" && metaItem.duration != "" && metaItem.releaseYear != 0)
+                        {
+                            // We have to take only the latest (higher ID number) of the same metadata
+                            // as "same", we consider metadata that have the same movieID and Language parameters
+                            if ((metaItem.movieId != previousMeta.movieId) || (metaItem.language != previousMeta.language))
+                            {// We have a new meta data that needs to be stored, 
+                             //  previousMeta, have the latest values of similar metas, since the list ordered by id and movieID
+                                moviesWithMeta.Add(metaItem);
+                                previousMeta = metaItem;        // Update the previous meta as we have added it to the list
+                                                                // Add the missing data in the stats list objects
+                                var obj = moviesWithStat.FirstOrDefault(statList => statList.movieId == metaItem.movieId);
+                                // obj is a reference type like the MovieStat inside the list so, the above assignment is a reference copy
+                                // thus, any change in the obj values, will be a change of the values inside the list...
+                                if (obj != null)        // There might extra movieIDs that do not exist in the metadata file
+                                {
+                                    obj.title = metaItem.title;
+                                    obj.releaseYear = metaItem.releaseYear;
+                                }
                             }
                         }
                     }
-                }
+                }   // Else, this line had no valid data, skip...
             }
 
         }
@@ -126,7 +137,7 @@ namespace movieAPI.Repositories
             List<MovieMeta> toReturn = new List<MovieMeta>();
             // For another implementation, we might needed some more 
             // process of the list before sending the data, but not this time
-            return moviesWithMeta.FindAll(x=>x.MovieId==movieID);
+            return moviesWithMeta.FindAll(x=>x.movieId== movieID);
 
         }
 

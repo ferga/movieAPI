@@ -20,18 +20,18 @@ namespace movieAPI.Entities
         /// <param name="movieId">the movie ID</param>
         /// <param name="watchDurationMs">the Duration the movie was viewed</param>
         /// <param name="watchCount">the amount of viewers</param>
-        public MovieStat(int movieId, int watchDurationMs, int watchCount)
+        public MovieStat(int movId, int watchDurationMs, int watchCount)
         {
-            MovieId = movieId;
+            movieId = movId;
             _avgWatchDurationMs = watchDurationMs;
             _watchCount = watchCount;
         }
 
-        public MovieStat(int movieId, string title, string releaseYear, int watchDurationMs, int watchCount)
+        public MovieStat(int movId, string ttl, int watchDurationMs, int watchCount, string ReleaseYear)
         {
-            MovieId = movieId;
-            Title = title;
-            ReleaseYear = releaseYear;
+            movieId = movId;
+            title = ttl;
+            releaseYear = Convert.ToInt32(ReleaseYear);
             _avgWatchDurationMs = watchDurationMs;
             _watchCount = watchCount;
         }
